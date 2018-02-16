@@ -1,3 +1,4 @@
+#ifdef USE_NETWORK
 IPAddress ip_pvoutput;
 int DnsStatus;
 char pvResponse[80];
@@ -152,4 +153,4 @@ void SendToPvOutput(BaseSensor** S)
     }
   }
 }
-
+#endif

@@ -12,6 +12,7 @@ class FerrarisSensor : public BaseSensor
     void CheckSensor();
     void CalculateActuals();
     void Status(Print& client); // Dump status to ethernet
+    void dumpPrint();
 
   private:
     bool forward;		   // Current spinning direction

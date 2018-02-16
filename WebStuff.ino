@@ -1,5 +1,6 @@
 String inString = String((char*)"");
 
+#ifdef USE_NETWORK
 void ServeWebClients()
 {
     EthernetClient client = server.available();
@@ -22,6 +23,7 @@ void ServeWebClients()
         client.stop();
     }
 }
+#endif
 
 bool Command(char* command)
 {
@@ -83,6 +85,7 @@ void ResetValues()
     }
 }
 
+#ifdef USE_NETWORK
 void ShowStatus(EthernetClient client)
 {
     const char* br = "<br>";
@@ -115,6 +118,7 @@ void ShowStatus(EthernetClient client)
     client << F("Reset Day=") << eeprom_read_byte ((uint8_t*)EE_RESETDAY) << br;
     client << F("Free=") << freeRam() << br;
 }
+#endif
 
 int freeRam() 
 {
@@ -122,5 +126,4 @@ int freeRam()
   int v; 
   return (int) &v - (__brkval == 0 ? (int) &__heap_start : (int) __brkval); 
 }
-
 

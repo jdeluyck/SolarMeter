@@ -1,13 +1,16 @@
 #define VERSION "V11.43"
-
 #include <SPI.h>
-#include <Ethernet.h>
-#include <EthernetUdp.h>
-#include <Dns.h>
+#ifdef USE_NETWORK
+  #include <Ethernet.h>
+  #include <EthernetUdp.h>
+  #include <Dns.h>
+#endif
 #include <TimeLib.h>
 #include <MsTimer2.h>
 #include <avr/wdt.h>
-#include <utility/w5100.h>
+#ifdef USE_NETWORK
+  #include <utility/w5100.h>
+#endif
 
 #include "FlashMini.h"
 #include "S0Sensor.h"
@@ -28,8 +31,10 @@ byte   iDay;
 byte   iHour;
 byte   iMinute;
 int    upTime;               // the amount of hours the Arduino is running
-EthernetServer server(555);  // port changed from 80 to 555
-EthernetUDP Udp;
+#ifdef USE_NETWORK
+  EthernetServer server(555);  // port changed from 80 to 555
+  EthernetUDP Udp;
+#endif
 char   webData[70];
 #ifdef USE_LOGGING
   File   logFile;
@@ -38,6 +43,7 @@ char   webData[70];
 
 void setup()
 {
+    #ifdef USE_NETWORK
     // wait for the ethernet shield to wakeup
     delay(300);
     // initialize network
@@ -48,14 +54,22 @@ void setup()
 
     // Try to set the time 10 times
     UpdateTime();
+    #endif
+    #ifdef USE_SERIAL
+    Serial.begin(115200);
+    Serial.print("BEGIN");
+    #endif
 
     #ifdef USE_LOGGING
         // initialize SD card
         SetupSD();
         OpenLogFile();
     #endif
+
+    #ifdef USE_NETWORK
     // start listening
     server.begin();
+    #endif
 
     // initialize the sensors
     for(byte i = 0; i < NUMSENSORS; i++)
@@ -134,6 +148,7 @@ void loop()
         {
             sensors[i]->Save();
         }
+        #ifdef USE_NETWORK
         // sync the time at fixed interval
         if(lastHour == 2 || lastHour == 14)
         {
@@ -144,6 +159,7 @@ void loop()
             {
                 SendMail();
             }
+        #endif
         #endif
     }
 
@@ -177,7 +193,9 @@ void loop()
         // update every 5 minutes or whatever is set in userdefs
         if((lastMinute%UPDATEINTERVAL) == 0)
         {
+            #ifdef USE_NETWORK
             SendToPvOutput(sensors);
+            #endif
             busy(33);
             // reset the maximum for pvoutput
             for(byte i = 0; i < NUMSENSORS; i++)
@@ -201,10 +219,17 @@ void loop()
     }
     busy(5);
     // see if there are clients to serve
+    #ifdef USE_NETWORK
     ServeWebClients();
+    #endif
     busy(0);
     // give the ethernet shield some time to rest
     delay(50);
+
+    for (byte i = 0; i < NUMSENSORS; i++)
+    {
+      sensors[i]->dumpPrint();
+    }
 }
 
 

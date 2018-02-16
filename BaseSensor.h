@@ -15,6 +15,7 @@ class BaseSensor
   virtual void Loop(int m);                    // Called from main loop				
   virtual void CalculateActuals();             // Convert all counters according to the pulses per unit
   virtual void Status(Print& client);          // Dump status to ethernet
+  virtual void dumpPrint();
   virtual void Reset();                        // Reset day-counter
   virtual void Save();                         // Save day-counter
   virtual void Update(long Value);             // Update and save the day counter

@@ -100,5 +100,9 @@ void BaseSensor::Status(Print& client)
     client << td << pulseLength;
 }
 
+void BaseSensor::dumpPrint()
+{
+  // nothing
+}
 
 

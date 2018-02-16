@@ -147,11 +147,19 @@ void FerrarisSensor::CalculateActuals()
 }
 void FerrarisSensor::Status(Print& client)
 {
-    BaseSensor::Status(client);
+    BaseSensor::Status(client); 
     client << F("<td>C=") << thresholdSampleCounter;
     client << F(" 1=") << threshold1L << "-" << threshold1H << ":" << last1;
     client << F(" 2=") << threshold2L << "-" << threshold2H << ":" << last2;
 }
+
+void FerrarisSensor::dumpPrint()
+{
+  char message[30];
+  printf(message,"C=%s, 1=%s-%s : %s , 2=%s-%s : %s\n",  thresholdSampleCounter, threshold1L,threshold1H, last1, threshold2L, threshold2H, last2);
+  Serial.print(message);
+}
+
 
 
 
